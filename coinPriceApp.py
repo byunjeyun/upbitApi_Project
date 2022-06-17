@@ -8,6 +8,7 @@ import json
 form_class = uic.loadUiType("ui/coinPrice.ui")[0]
 
 class CoinViewThread(QThread):
+    pyqtSignal(str, float, float, float, float, float, float, float, float)
     def __init__(self):
         super().__init__()
         self.ticker = "BTC"
