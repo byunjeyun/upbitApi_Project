@@ -7,14 +7,14 @@
     <x>0</x>
     <y>0</y>
     <width>422</width>
-    <height>263</height>
+    <height>230</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color:rgb(255, 239, 190)</string>
+   <string notr="true">background-color:rgb(255, 233, 253)</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QLabel" name="label">
@@ -33,6 +33,9 @@
       <bold>true</bold>
      </font>
     </property>
+    <property name="styleSheet">
+     <string notr="true">color:rgb(0, 50, 0 )</string>
+    </property>
     <property name="text">
      <string>코인선택</string>
     </property>
@@ -50,25 +53,29 @@
    <widget class="QLabel" name="price_label">
     <property name="geometry">
      <rect>
-      <x>130</x>
-      <y>60</y>
-      <width>181</width>
-      <height>31</height>
+      <x>120</x>
+      <y>50</y>
+      <width>201</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>Arial</family>
-      <pointsize>16</pointsize>
+      <pointsize>20</pointsize>
       <weight>75</weight>
       <bold>true</bold>
      </font>
     </property>
+    <property name="focusPolicy">
+     <enum>Qt::NoFocus</enum>
+    </property>
     <property name="styleSheet">
-     <string notr="true">border:solid;border-color:#5599cc;border-width:1px;background-color:white</string>
+     <string notr="true">border:solid;border-color:rgb(255, 123, 125);border-width:2px;background-color:rgb(255, 205, 220); color:red;
+border-radius:10px;</string>
     </property>
     <property name="text">
-     <string>212,345,671</string>
+     <string>0</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -79,14 +86,14 @@
      <rect>
       <x>10</x>
       <y>50</y>
-      <width>91</width>
+      <width>101</width>
       <height>51</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>Tw Cen MT Condensed Extra Bold</family>
-      <pointsize>36</pointsize>
+      <pointsize>26</pointsize>
       <weight>50</weight>
       <bold>false</bold>
      </font>
@@ -95,7 +102,7 @@
      <string notr="true">color:#aaaa55</string>
     </property>
     <property name="text">
-     <string>BTTC</string>
+     <string>BTC</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -119,13 +126,13 @@
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true">border:solid;border-color:#5599cc;border-width:1px;background-color:red;color:white</string>
+     <string notr="true">border:solid;border-color:#5599cc;border-width:1px;background-color:red;color:white;border-radius:10px</string>
     </property>
     <property name="text">
-     <string>-15.42%</string>
+     <string>0</string>
     </property>
     <property name="alignment">
-     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     <set>Qt::AlignCenter</set>
     </property>
    </widget>
    <widget class="QLabel" name="trade_volume_label">
@@ -177,7 +184,7 @@
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>160</y>
+      <y>150</y>
       <width>81</width>
       <height>20</height>
      </rect>
@@ -190,7 +197,7 @@
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true">color:#666666</string>
+     <string notr="true">color:red</string>
     </property>
     <property name="text">
      <string>52주 신고가</string>
@@ -199,17 +206,17 @@
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QLabel" name="highest_52_labell">
+   <widget class="QLabel" name="highest_52_label">
     <property name="geometry">
      <rect>
       <x>90</x>
-      <y>160</y>
+      <y>150</y>
       <width>111</width>
       <height>21</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">border:solid;border-color:#5599cc;border-width:1px;background-color:white</string>
+     <string notr="true">border:solid;border-color:#5599cc;border-width:1px;background-color:white;color:red</string>
     </property>
     <property name="text">
      <string/>
@@ -222,7 +229,7 @@
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>200</y>
+      <y>180</y>
       <width>81</width>
       <height>20</height>
      </rect>
@@ -235,7 +242,7 @@
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true">color:#666666</string>
+     <string notr="true">color:blue</string>
     </property>
     <property name="text">
      <string>52주 신저가</string>
@@ -244,17 +251,17 @@
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QLabel" name="st_5210">
+   <widget class="QLabel" name="lowest_52_label">
     <property name="geometry">
      <rect>
       <x>90</x>
-      <y>200</y>
+      <y>180</y>
       <width>111</width>
       <height>21</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">border:solid;border-color:#5599cc;border-width:1px;background-color:white</string>
+     <string notr="true">border:solid;border-color:#5599cc;border-width:1px;background-color:white; color:blue</string>
     </property>
     <property name="text">
      <string/>
@@ -312,7 +319,7 @@
     <property name="geometry">
      <rect>
       <x>300</x>
-      <y>160</y>
+      <y>150</y>
       <width>111</width>
       <height>21</height>
      </rect>
@@ -331,7 +338,7 @@
     <property name="geometry">
      <rect>
       <x>220</x>
-      <y>160</y>
+      <y>150</y>
       <width>71</width>
       <height>20</height>
      </rect>
@@ -357,7 +364,7 @@
     <property name="geometry">
      <rect>
       <x>220</x>
-      <y>200</y>
+      <y>180</y>
       <width>71</width>
       <height>20</height>
      </rect>
@@ -379,11 +386,11 @@
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QLabel" name="closing_price_label_16">
+   <widget class="QLabel" name="closing_price_label">
     <property name="geometry">
      <rect>
       <x>300</x>
-      <y>200</y>
+      <y>180</y>
       <width>111</width>
       <height>21</height>
      </rect>
@@ -398,16 +405,6 @@
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
-  </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>422</width>
-     <height>21</height>
-    </rect>
-   </property>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
