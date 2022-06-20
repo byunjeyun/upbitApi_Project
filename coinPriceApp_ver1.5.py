@@ -3,8 +3,9 @@ import sys
 import time
 
 import requests
+import telegram
 from PyQt5 import uic
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QIcon, QIntValidator
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 import pyupbit
@@ -14,6 +15,7 @@ form_class = uic.loadUiType("ui/coinPrice.ui")[0]
 
 class CoinViewThread(QThread):
     coinDataSent = pyqtSignal(float, float, float, float, float, float, float, float)
+    telegramDataSent = pyqtSignal(float) #알람용 현재가격 시그널
 
     def __init__(self, ticker):
         super().__init__()
@@ -47,14 +49,15 @@ class CoinViewThread(QThread):
                                    float(lowest_52_week_price),
                                    float(prev_closing_price))
 
+            #텔레그램 알람 메시지용 현재가격 슬롯에 보내기
+            self.telegramDataSent.emit(float(trade_price))
 
-            time.sleep(10) #api 호출 1초 딜레이 (딜레이없으면 벤 당함)
+            time.sleep(2) #api 호출 1초 딜레이 (딜레이없으면 벤 당함)
 
     def close(self):
         self.alive = False
 
 class MainWindow(QMainWindow, form_class):
-
     def __init__(self, ticker="BTC"):  # MainWinodw에서 쓰레드 클래스에 인수를 전달(초기화자 매개변수 선언)
         super().__init__()
         self.setupUi(self)
@@ -65,9 +68,20 @@ class MainWindow(QMainWindow, form_class):
 
         self.cvt = CoinViewThread(ticker) #코인정보를 가져오는 쓰레드 클래스를 객체로 선언
         self.cvt.coinDataSent.connect(self.fillCoinData) #쓰레드시그널에서 온 데이터를 받아올 슬롯함수연결
+        self.cvt.coinDataSent.connect(self.fillTelegramPrice)  # 쓰레드 탤레그램 알람메시지 시그널
         self.cvt.start() #쓰레드 클래스의 run()호출(함수시작)
         self.combobox_set() #콤보박스 초기화 함수 호출
-        
+
+        #사용자 알람 금액 입력시 정수만 입력받도록 설정
+
+        self.sell_price.setValidator(QIntValidator(self))
+        self.buy_price.setValidator(QIntValidator(self))
+
+        self.alarm_btn.clicked.connect(self.alarmBtnAction)
+        self.alarm_btn.setStyleSheet("background-color:skyblue;")
+
+        self.alarmFlag = 0
+
     def combobox_set(self): #코인리스트 콤보박스셋팅
         ticker_list = pyupbit.get_tickers(fiat="KRW") #업비트의 KRW 코인 티커리스트 불러오기
         coin_list = []
@@ -82,15 +96,23 @@ class MainWindow(QMainWindow, form_class):
 
         #coin_list=['BTC', 'ETH', 'XRP'] 리스트 직접 선택
         self.coin_comboBox.addItems(coin_list3)
+
         self.coin_comboBox.currentIndexChanged.connect(self.coin_select_Combo) #콤보박스의 값이 변경되었을때 연결된 함수 실행
 
     def coin_select_Combo(self):
         coin_ticker = self.coin_comboBox.currentText()
         self.ticker = coin_ticker
         self.ticker_label.setText(coin_ticker)
+
+        self.sell_price.setText('')
+        self.buy_price.setText('')
+        self.alarm_btn.setText('알람시작')
+        self.alarm_btn.setStyleSheet("backgorund-color:green;border-radius:5px;color:white")
+
         self.cvt.close()
         self.cvt = CoinViewThread(coin_ticker)  # 코인정보를 가져오는 쓰레드 클래스를 객체로 선언
         self.cvt.coinDataSent.connect(self.fillCoinData)  # 쓰레드시그널에서 온 데이터를 받아올 슬롯함수연결
+        self.cvt.coinDataSent.connect(self.fillTelegramPrice) # 쓰레드 탤레그램 알람메시지 시그널
         self.cvt.start()  # 쓰레드 클래스의 run()호출(함수시작)
 
     # 쓰레드클레스에서 보내준 데이터를 받아주는 슬롯 함수
@@ -110,6 +132,61 @@ class MainWindow(QMainWindow, form_class):
         if '-' in self.change_rate_label.text():
             self.change_rate_label.setStyleSheet("background-color:blue;border-radius:10px; color:white")
             self.price_label.setStyleSheet("border:solid;border-color:rgb(123, 123, 255);border-width:2px;background-color:rgb(205, 205, 255); border-radius:10px;color:blue")
+
+    def alarmBtnAction(self):
+        self.alramFlag = 0
+        if self.alarm_btn.text() == "알람시작":
+            self.alarm_btn.setText('알람중지')
+            self.alarm_btn.setStyleSheet("backgorund-color:pink;border-radius:5px;color:white")
+        else:
+            self.alarm_btn.setText('알람시작')
+            self.alarm_btn.setStyleSheet("backgorund-color:green;border-radius:5px;color:white")
+
+
+
+    def fillTelegramPrice(self, trade_price):
+        alarmButtonText = self.alarm_btn.text()
+
+        if alarmButtonText == "알람중지":
+            if self.sell_price.text() == '' or self.buy_price.text() =='':
+                if self.alarmFlag == 0:
+                    self.alarmFlag = 1
+                    QMessageBox.warning(self,'입력오류','알람받을 매수/매도 금액을 입력하세요')
+                    self.alarm_btn.setText("알람시작")
+                    self.alarm_btn.setStyleSheet("backgorund-color:green;border-radius:5px;color:white")
+
+            else:
+                if self.alarmFlag == 0:
+                    sell_price = float(self.sell_price.text())
+                    buy_price = float(self.buy_price.text())
+
+                    if trade_price >= sell_price:
+                        print('알람울림')
+                        self.alarmFlag == 1
+
+                    if trade_price <= buy_price:
+                        print('알람울림')
+                        self.alarmFlag == 1
+        else:
+            pass
+
+class TelegramBotClass(QThread):
+    def __init__(self):
+        super().__init__()
+
+        with open("token/token.txt") as f:
+            lines = f.readlin()
+            token = lines[0].strip()
+
+        self.bot = telegram.Bot(token=token)
+
+    def telegramBot(self, text):
+        try:
+            self.bot.send_message(chat_id=, text=text)
+            #self.bot.send_message(chat_id=, text=text) 같은 방에있다면 챗아이디만 추가해주면 됨
+        except:
+            pass
+
 
 
 if __name__ == '__main__':
