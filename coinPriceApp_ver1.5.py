@@ -161,12 +161,12 @@ class MainWindow(QMainWindow, form_class):
                     buy_price = float(self.buy_price.text())
 
                     if trade_price <= sell_price:
-                        self.telegram_message(f"{self.ticker}의 현재가격이 알람설정하신 금액 {sell_price} 이하에서 거래되었습니다.")
+                        self.telegram_message(f"{self.ticker}의 거래가격이 알람설정하신 금액 {sell_price} 이하에서 거래되었습니다.")
                         print(sell_price)
                         self.alarmFlag = 1
 
                     if trade_price >= buy_price:
-                        self.telegram_message(f"{self.ticker}의 현재가격이 알람설정하신 금액 {buy_price} 이상에서 거래되었습니다.")
+                        self.telegram_message(f"{self.ticker}의 거래가격이 알람설정하신 금액 {buy_price} 이상에서 거래되었습니다.")
                         print(buy_price)
                         self.alarmFlag = 1
         else:
