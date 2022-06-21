@@ -63,7 +63,7 @@ class MainWindow(QMainWindow, form_class):
         self.setupUi(self)
         self.setWindowTitle("Coin Price Overview")
         self.setWindowIcon(QIcon("icons/coin.png"))
-        self.statusBar().showMessage("ver 1.0")
+        self.statusBar().showMessage("ver 2.0 by.uragiljay")
         self.ticker = ticker
 
         self.cvt = CoinViewThread(ticker) #코인정보를 가져오는 쓰레드 클래스를 객체로 선언
@@ -78,7 +78,7 @@ class MainWindow(QMainWindow, form_class):
         self.buy_price.setValidator(QIntValidator(self))
 
         self.alarm_btn.clicked.connect(self.alarmBtnAction)
-        self.alarm_btn.setStyleSheet("background-color:skyblue;")
+        self.alarm_btn.setStyleSheet("background-color:green;border-radius:5px;color:white")
 
         self.alarmFlag = 0
 
@@ -107,7 +107,7 @@ class MainWindow(QMainWindow, form_class):
         self.sell_price.setText('')
         self.buy_price.setText('')
         self.alarm_btn.setText('알람시작')
-        self.alarm_btn.setStyleSheet("backgorund-color:green;border-radius:5px;color:white")
+        self.alarm_btn.setStyleSheet("background-color:green;border-radius:5px;color:white")
 
         self.cvt.close()
         self.cvt = CoinViewThread(coin_ticker)  # 코인정보를 가져오는 쓰레드 클래스를 객체로 선언
@@ -134,13 +134,13 @@ class MainWindow(QMainWindow, form_class):
             self.price_label.setStyleSheet("border:solid;border-color:rgb(123, 123, 255);border-width:2px;background-color:rgb(205, 205, 255); border-radius:10px;color:blue")
 
     def alarmBtnAction(self):
-        self.alramFlag = 0
+        self.alarmFlag = 0
         if self.alarm_btn.text() == "알람시작":
             self.alarm_btn.setText('알람중지')
-            self.alarm_btn.setStyleSheet("backgorund-color:pink;border-radius:5px;color:white")
+            self.alarm_btn.setStyleSheet("background-color:pink;border-radius:5px;color:red")
         else:
             self.alarm_btn.setText('알람시작')
-            self.alarm_btn.setStyleSheet("backgorund-color:green;border-radius:5px;color:white")
+            self.alarm_btn.setStyleSheet("background-color:green;border-radius:5px;color:white")
 
 
 
@@ -153,36 +153,45 @@ class MainWindow(QMainWindow, form_class):
                     self.alarmFlag = 1
                     QMessageBox.warning(self,'입력오류','알람받을 매수/매도 금액을 입력하세요')
                     self.alarm_btn.setText("알람시작")
-                    self.alarm_btn.setStyleSheet("backgorund-color:green;border-radius:5px;color:white")
+                    self.alarm_btn.setStyleSheet("background-color:green;border-radius:5px;color:white")
 
             else:
                 if self.alarmFlag == 0:
                     sell_price = float(self.sell_price.text())
                     buy_price = float(self.buy_price.text())
 
-                    if trade_price >= sell_price:
-                        print('알람울림')
-                        self.alarmFlag == 1
+                    if trade_price <= sell_price:
+                        self.telegram_message(f"{self.ticker}의 현재가격이 알람설정하신 금액 {sell_price} 이하에서 거래되었습니다.")
+                        print(sell_price)
+                        self.alarmFlag = 1
 
-                    if trade_price <= buy_price:
-                        print('알람울림')
-                        self.alarmFlag == 1
+                    if trade_price >= buy_price:
+                        self.telegram_message(f"{self.ticker}의 현재가격이 알람설정하신 금액 {buy_price} 이상에서 거래되었습니다.")
+                        print(buy_price)
+                        self.alarmFlag = 1
         else:
             pass
 
+
+    def telegram_message(self, message):
+        telegram_call = TelegramBotClass(self)
+        telegram_call.telegramBot(message)
+
 class TelegramBotClass(QThread):
-    def __init__(self):
-        super().__init__()
-
-        with open("token/token.txt") as f:
-            lines = f.readlin()
-            token = lines[0].strip()
-
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.parent = parent
+        
+        # 토큰 파일을 못읽어서 주석처리 후 직접 입력
+        # with open("token/token.txt") as f:
+        #     lines = f.readline()
+        #     token = lines[0].strip()
+        token = '토큰입력'
         self.bot = telegram.Bot(token=token)
 
     def telegramBot(self, text):
         try:
-            self.bot.send_message(chat_id=, text=text)
+            self.bot.send_message(chat_id="쳇아이디입력", text=text)
             #self.bot.send_message(chat_id=, text=text) 같은 방에있다면 챗아이디만 추가해주면 됨
         except:
             pass
